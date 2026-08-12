@@ -1,193 +1,345 @@
-# Maziyang2 的博客
+# Maziyang2 的博客：结构与维护说明
 
-基于 Astro 与开源 Clay Blog 构建的个人博客，内容使用 Markdown 管理，包含文章、随笔、归档、分类、标签、搜索、RSS、站点地图和 Twikoo 后端评论。
+这是 Maziyang2 博客的 Sites 项目维护文档，供本人以及后续接手的 AI、GPT、Codex 或其他自动化工具阅读。
+
+根目录的 `README.md` 和 `AGENTS.md` 不会被直接打包进网站。网站有一份经过隐私检查的公开结构说明 `/readme/`，以及供工具读取的 `/.well-known/site-readme.json`。它们不出现在首页、导航或页脚，只通过固定地址和页面头部的 `rel="help"` 被发现。
+
+博客对外公开，但修改权限仍只属于 Maziyang2 及其明确授权的 Sites 协作者。OpenAI Sites 项目源码是维护和发布基准，GitHub 不是必要依赖。公开说明不授予写入权限，所有文档和网页都不能记录密码、Token、API Key、私人邮箱、电话号码、精确住址、内部服务地址或其他隐私信息。
+
+## 当前站点概览
+
+- 框架：Astro 7，静态内容站点。
+- 内容：Markdown 文章与随笔。
+- 主要页面：首页、随笔、归档、关于、搜索、分类、标签和文章详情。
+- 输出：`npm run build` 后生成适配 Sites 的 `dist/client` 与 `dist/server`。
+- 托管：OpenAI Sites，项目绑定信息位于 `.openai/hosting.json`。
+- 访问：博客对外公开；管理和发布仍受 Sites 权限控制。
+- 数据库与上传：当前未使用 D1、R2 或用户登录。
+- 维护基准：OpenAI Sites 项目源码；GitHub 链接只作为可选的页面内容展示。
+
+## 内容归属：必须先读
+
+站点名称和站点作者已经改为 Maziyang2，但仓库中现有内容并不都代表 Maziyang2 原创。
+
+当前约定：
+
+| `ownership` 值 | 含义 | 后续 AI 应如何处理 |
+| --- | --- | --- |
+| `personal` | 已由用户确认属于 Maziyang2 的原创内容 | 可使用 Maziyang2 作为文章作者 |
+| `inherited` | 从原仓库继承，真实作者或授权信息尚未核验 | 不得自动改成 Maziyang2 原创 |
+| `example` | 用于演示网站功能的模板内容 | 可在用户要求时删除或替换 |
+| `unverified` | 来源暂时无法确认 | 先询问用户，不要猜测作者 |
+
+当前内容分类：
+
+- `src/content/posts/示例/`：`example`。
+- `src/content/posts/AI/`：目前为模板示例，标记为 `example`。
+- `src/content/posts/技术/`：目前为模板示例，标记为 `example`。
+- `src/content/posts/26/06/260609-agent.blog.md`：继承内容，标记为 `inherited`。
+- `src/content/notes/` 下现有随笔：继承内容，标记为 `inherited`。
+
+除非用户明确确认，AI 不得把 `inherited`、`example` 或 `unverified` 改为 `personal`，不得为文章编造作者或来源，也不得仅因为站点作者是 Maziyang2 就在文章结构化数据中声明 Maziyang2 是作者。
 
 ## 项目结构
 
-```
-blog/
-├── public/                # 静态资源
-│   ├── avatars/           # 头像
-│   ├── covers/            # 封面图加载失败时的兜底图
-│   └── sw.js              # 旧版 service worker 的清理开关
+```text
+clay-blog/
+├── AGENTS.md                         # AI 修改入口与强制规则，不直接进入网站
+├── README.md                         # 完整结构和维护说明，不直接进入网站
+├── .openai/
+│   └── hosting.json                  # Sites 项目标识；只保留 project_id、d1、r2
+├── public/                           # 原样发布的公开静态资源
+│   ├── avatars/                      # 头像和站点图标
+│   ├── covers/                       # 文章封面兜底图
+│   ├── share/                        # 社交分享封面
+│   ├── service-worker.js
+│   └── sw.js
+├── scripts/
+│   └── prepare-sites-build.mjs       # 将 Astro 静态输出整理为 Sites 部署格式
 ├── src/
-│   ├── components/        # 组件（导航、音乐播放器、评论等）
-│   ├── layouts/           # 页面布局
-│   ├── pages/             # 路由页面（首页、归档、搜索、RSS 等）
+│   ├── components/                   # 导航、页脚、音乐、评论、文章摘要等组件
 │   ├── content/
-│   │   ├── posts/         # 文章（Markdown）
-│   │   └── notes/         # 随笔（Markdown）
+│   │   ├── posts/                    # 文章 Markdown；目录和文件名参与 URL
+│   │   └── notes/                    # 随笔 Markdown
 │   ├── data/
-│   │   ├── site.config.json      # 关于页配置（见下文）
-│   │   └── github-projects.json  # GitHub 项目缓存
-│   ├── lib/               # 工具函数与 Markdown 插件
-│   └── styles/            # 全局样式
-├── astro.config.mjs       # Astro 配置
-└── package.json
+│   │   ├── site.config.json          # 站点身份、GitHub、项目卡片和指定链接
+│   │   ├── site-readme.ts            # 站内 README 的机器可读结构数据
+│   │   └── github-projects.json      # GitHub API 不可用时的公开项目缓存
+│   ├── layouts/
+│   │   └── BaseLayout.astro          # HTML、SEO、Open Graph、全站布局
+│   ├── lib/
+│   │   └── posts.ts                  # 排序、摘要、分类、标签和 URL 工具
+│   ├── pages/                        # Astro 路由页面
+│   ├── styles/
+│   │   └── global.css                # 全站视觉、响应式、深浅主题和动画
+│   └── content.config.ts             # 文章与随笔字段校验
+├── astro.config.mjs                  # Astro、Markdown 插件和重定向
+├── package.json                      # 开发与构建命令
+└── package-lock.json                 # 锁定依赖版本，不要随意删除
 ```
 
-## 快速开始
+`dist/`、`.astro/` 和 `node_modules/` 都是生成目录，不应手工修改或提交。
 
-**环境要求：只需要 Node.js（>= 18.20 或 20.3+ 或 22+）。不需要单独安装 Astro**——它是项目依赖，`npm install` 时会自动装好（npm 随 Node.js 一起安装）。
+## 页面与源码对应关系
 
-第一次使用，按顺序执行：
+| 网站路径 | 主要源码 | 用途 |
+| --- | --- | --- |
+| `/` | `src/pages/index.astro` | 首页头像、介绍、精选文章和最新文章 |
+| `/notes/` | `src/pages/notes.astro` | 随笔列表 |
+| `/archive/` | `src/pages/archive.astro` | 年份、分类、标签和全部文章 |
+| `/about/` | `src/pages/about.astro` | 个人说明、GitHub 项目和自定义项目组 |
+| `/search/` | `src/pages/search.astro` | 站内搜索界面 |
+| `/search.json` | `src/pages/search.json.ts` | 构建时生成的搜索索引 |
+| `/posts/.../` | `src/pages/posts/[...slug].astro` | 文章详情、目录、相关文章和评论 |
+| `/categories/.../` | `src/pages/categories/[category].astro` | 分类页 |
+| `/tags/.../` | `src/pages/tags/[tag].astro` | 标签页 |
+| `/rss.xml` | `src/pages/rss.xml.ts` | RSS 订阅 |
+| `/sitemap.xml` | `src/pages/sitemap.xml.ts` | 站点地图 |
+| `/robots.txt` | `src/pages/robots.txt.ts` | 爬虫规则 |
+| `/404.html` | `src/pages/404.astro` | 404 页面 |
+| `/readme/` | `src/pages/readme.astro` | 不在导航中显示的公开结构说明 |
+| `/.well-known/site-readme.json` | `src/pages/.well-known/site-readme.json.ts` | 供 AI 和工具读取的结构数据 |
 
-```bash
-# 1. 安装 Node.js（未安装时）：到 https://nodejs.org/ 下载 LTS 版本安装
+导航入口在 `src/components/Nav.astro`，页脚入口在 `src/components/Footer.astro`，全站标题、描述、分享图和结构化数据在 `src/layouts/BaseLayout.astro`。
 
-# 2. 下载项目
-git clone https://github.com/Maziyang2/clay-blog.git
-cd clay-blog
+## 文章字段
 
-# 3. 安装依赖（自动安装 Astro）
-npm install
+文章放在 `src/content/posts/`。建议使用小写英文或简洁中文目录，文件名不要包含第二个点号，避免 URL 被意外规范化。
 
-# 4. 启动本地预览
-npm run dev
+推荐模板：
+
+```yaml
+---
+title: "文章标题"
+description: "一到两句话的摘要"
+date: "2026-08-13"
+updated: "2026-08-13"
+author: "Maziyang2"
+ownership: personal
+hidden: false
+categories:
+  - 技术
+tags:
+  - Astro
+  - 博客
+cover: "/covers/example.jpg"
+sticky: 0
+---
 ```
 
-浏览器打开 `http://localhost:4321` 即可看到博客。修改 `src/content/` 下的 Markdown 后保存，页面会热更新。
+字段说明：
 
-## 构建
+| 字段 | 是否必需 | 说明 |
+| --- | --- | --- |
+| `title` | 是 | 文章标题 |
+| `description` | 建议 | 首页、搜索和分享摘要 |
+| `date` | 建议 | 发布日期，格式 `YYYY-MM-DD` |
+| `updated` | 否 | 最近更新日期 |
+| `author` | 原创建议 | 已确认的作者名称；不要猜测 |
+| `ownership` | 强烈建议 | `personal`、`inherited`、`example` 或 `unverified` |
+| `source` | 转载时建议 | 已核验的原文 URL；必须是完整的 `https://` 地址 |
+| `categories` | 否 | 一个或多个分类 |
+| `tags` | 否 | 更细粒度的主题标签 |
+| `cover` | 否 | `/public` 下的站内路径或可信外链 |
+| `sticky` | 否 | 首页精选权重，数字越大越靠前；普通文章用 `0` 或省略 |
+| `hidden` | 否 | `true` 时保留 Markdown 和数据，但从整个公开网站的构建结果中排除 |
 
-```bash
-npm run build
-npm run preview
+## 增加文章
+
+1. 在 `src/content/posts/<分类>/` 新建 `.md` 文件。
+2. 使用上面的 frontmatter 模板。
+3. 如果是 Maziyang2 原创，明确写 `ownership: personal` 和 `author: "Maziyang2"`。
+4. 如果来源未确认，写 `ownership: unverified`，不要补写作者。
+5. 正文使用 Markdown；站内图片放在 `public/`，引用时从 `/` 开始。
+6. 检查文章内链、分类、标签、封面和日期。
+7. 执行 `npm run build`，确认生成成功后再发布。
+
+新文章会自动进入首页、归档、分类、标签、搜索、RSS 和站点地图，不需要手动修改这些页面。
+
+## 隐藏文章但保留源码
+
+“隐藏文章”是用户在修改网站时发送给 AI 或维护工具的指令，不是在网站里增加一个访客可以操作的开关。收到指令后，在目标文章的 frontmatter 中增加：
+
+```yaml
+hidden: true
 ```
 
-构建产物输出到 `dist/`，可部署到任意静态托管平台。
+效果如下：
 
-## 部署
+- Markdown 文件、正文和元数据继续保留在 Sites 项目源码中。
+- 重新构建后不生成该文章的公开页面，原文章 URL 不再可用。
+- 首页、归档、分类、标签、站内搜索、RSS 和站点地图都不显示该文章。
+- 将值改为 `false` 或删除该字段，并重新构建发布，即可恢复显示。
 
-1. 连接仓库（Vercel / Netlify / Cloudflare Pages / GitHub Pages 均可），构建命令 `npm run build`，输出目录 `dist`
-2. 在平台环境变量中设置 `SITE_URL` 为正式域名
-3. 自定义域名按平台指引添加 DNS 解析（CNAME 记录）
-4. 若旧域名需要迁移，在平台侧配置 301 重定向
+`hidden` 是构建规则，不是访问权限或加密功能。敏感内容不得以“隐藏文章”的方式保留在项目中。
 
-更详细的说明见示例文章《静态站点的部署实践》。
+## 删除文章
 
-## 环境变量
+1. 删除对应 Markdown 文件。
+2. 搜索文章路径或文件名，检查其他文章和 `src/data/site.config.json` 是否仍然链接到它。
+3. 如果删除的是 `sticky` 文章，确认首页精选区仍然合理。
+4. 重新构建，确认没有失效内链。
 
-复制 `.env.example` 为 `.env`，按需填写：
+不要为了“清理示例”一次性删除全部内容，除非用户明确指定要删除哪些文章或目录。
 
-```bash
-SITE_URL=https://example.com
-PUBLIC_TWIKOO_ENV_ID=https://your-twikoo.example.com
-PUBLIC_NETEASE_PLAYLIST_ID=8792942606
-PUBLIC_MUSIC_API=https://meting.mikus.ink/api
-```
+## 移动或重命名文章
 
-- `SITE_URL`：站点正式域名，用于 RSS、sitemap、canonical URL 和结构化数据。
-- `PUBLIC_TWIKOO_ENV_ID`：Twikoo 后端地址。未配置时，评论区和选中文字引用评论功能会自动隐藏。
-- `PUBLIC_NETEASE_PLAYLIST_ID`：网易云音乐歌单 ID。未配置时使用博主歌单 `8792942606`。
-- `PUBLIC_MUSIC_API`：Meting 兼容的音乐 API 地址，默认使用 `https://meting.mikus.ink/api`，也可换成自建服务。
+文章所在目录和文件名会影响 URL。移动或重命名文件通常会改变公开链接，因此需要：
 
-## 音乐播放器
+1. 记录旧 URL 和新 URL。
+2. 更新站内文章链接和 `site.config.json` 中的 `article` 字段。
+3. 如旧链接已经对外使用，在 `astro.config.mjs` 的 `redirects` 中增加旧地址到新地址的重定向。
+4. 重新检查搜索索引、RSS 和站点地图。
 
-全站右下角的悬浮播放器会在浏览器中按需读取网易云歌单，不会自动播放。替换歌单时，从网易云歌单链接中复制 `id` 数字，写入 `.env` 的 `PUBLIC_NETEASE_PLAYLIST_ID` 后重新启动开发服务。
+## 修改站点身份和常用链接
 
-Meting 是非官方接入方式，受网易云版权、VIP 与地区限制影响，个别歌曲可能无法播放。生产环境若需要更稳定，建议将 `PUBLIC_MUSIC_API` 指向自建的 Meting 兼容服务。
+`src/data/site.config.json` 是最优先的配置入口：
 
-## 内容
-
-- 文章：`src/content/posts/`
-- 随笔：`src/content/notes/`
-- 内容字段定义：`src/content.config.ts`
-
-文章和随笔会在构建时生成静态页面。若使用自定义 `slug`，需要保证唯一，避免内容集合覆盖。
-
-仓库自带一组**示例文章与随笔**（`示例/`、`AI/`、`技术/` 分类），用于演示首页、分类、标签、归档、搜索与 RSS 等页面的完整效果；封面图引用图床占位图。使用前请直接删除这些示例文件，换成自己的内容。
-
-## 更换成你的博客
-
-克隆后需要改的地方，全部集中在这几个文件：
-
-| 要改的内容 | 位置 |
+| 需求 | 修改位置 |
 | --- | --- |
-| 站点名称 / 简介 / 作者 | [src/data/site.config.json](src/data/site.config.json) 的 `siteName` / `siteDescription` / `siteAuthor` |
-| 头像 | 替换 `public/avatars/avatar.png` 与 `avatar-bw.png` |
-| GitHub 用户名与仓库链接 | [src/data/site.config.json](src/data/site.config.json) 的 `githubUser` / `githubRepo`（不想要导航栏的 GitHub 按钮，把 `githubRepo` 留空即可） |
-| 正式域名 | 复制 `.env.example` 为 `.env`，设置 `SITE_URL` |
-| 评论后端 | `.env` 的 `PUBLIC_TWIKOO_ENV_ID`（不配则评论自动隐藏） |
-| 音乐播放器歌单 | `.env` 的 `PUBLIC_NETEASE_PLAYLIST_ID` |
-| 文章与随笔 | 删除 `src/content/posts/` 下的 `示例/`、`AI/`、`技术/` 目录和 `src/content/notes/` 下的示例随笔，换成自己的 Markdown |
+| 站点名称 | `siteName` |
+| 站点描述 | `siteDescription` |
+| 默认站点作者 | `siteAuthor` |
+| GitHub 用户名 | `githubUser` |
+| 导航栏源码链接 | `githubRepo` |
+| GitHub 项目卡片图标或文章链接 | `projectOverrides` |
+| 自定义项目组、下载项或外部链接 | `projectGroups` |
 
-改完 `site.config.json` 后重新 `npm run dev` 即可生效。
+其他固定链接位置：
 
-## 关于页自定义配置
+| 链接或内容 | 修改位置 |
+| --- | --- |
+| 首页介绍与首页社交链接 | `src/pages/index.astro` |
+| 关于页介绍与社交链接 | `src/pages/about.astro` |
+| 顶部导航项目 | `src/components/Nav.astro` |
+| 页脚链接与页脚文字 | `src/components/Footer.astro` |
+| 音乐播放器默认歌单与接口 | `.env`；默认行为在 `src/components/MusicPlayer.astro` |
+| 评论后端 | `.env`；组件为 `CommentsBox.astro` 与 `comments.js` |
+| 站点分享标题、描述和图片 | `src/layouts/BaseLayout.astro` 与 `public/share/` |
+| URL 重定向 | `astro.config.mjs` |
 
-关于页的开源项目与资源下载均通过 [src/data/site.config.json](src/data/site.config.json) 配置：
+修改链接时必须同时检查：链接文字、`href`、是否需要新窗口、`rel="noopener noreferrer"`、站内目标是否存在，以及尾部 `/` 是否与当前路由风格一致。
+
+## 修改“关于”页项目结构
+
+关于页包含两类项目：
+
+1. `githubUser` 对应账号的公开非 Fork 仓库，会在构建时从 GitHub API 获取。
+2. `projectGroups` 是手工配置的项目组，可放源码、资源或其他指定链接。
+
+`projectOverrides` 可以按仓库名设置：
 
 ```jsonc
 {
-  // GitHub 用户名：构建时自动拉取该账号的公开仓库作为「开源项目」
-  "githubUser": "Maziyang2",
-  // 按仓库名覆盖卡片细节：icon 为卡片图标（见 src/components/Icon.astro 的图标名），
-  // article 为指向博客内相关文章的「笔记」链接（不填则不显示该按钮）
-  "projectOverrides": {
-    "md-wechat": { "icon": "wechat" },
-    "Steam-game-cover-gets": { "icon": "download", "article": "/posts/ai-era/github/steamcovr/" }
-  },
-  // 静态项目组（如「资源下载」），可直接增删条目或整组
-  "projectGroups": [
-    {
-      "title": "资源下载",
-      "description": "文章里提到的网盘、脚本和可复用资料。",
-      "items": [
-        {
-          "title": "Bookmarklet 小书签",
-          "owner": "Baidu Pan",
-          "description": "浏览器小书签源码与使用说明，适合做轻量自动化。",
-          "icon": "bookmark",
-          "href": "https://pan.baidu.com/s/1olHsMYzcOtGCYiY6nUs6eQ?pwd=6666",
-          "article": "/posts/book/",
-          "tags": ["书签", "脚本", "code:6666"]
-        }
-      ]
-    }
-  ]
+  "HiddenWindow": {
+    "icon": "layers",
+    "article": "/posts/hiddenwindow/"
+  }
 }
 ```
 
-「开源项目」组在构建时从 GitHub API 拉取（自动排除 fork，按 Star 数排序），新增仓库重新构建即可自动出现；API 不可达时回退到 [src/data/github-projects.json](src/data/github-projects.json) 缓存，可用以下命令手动刷新：
+- `icon` 必须使用 `src/components/Icon.astro` 中已存在的名称。
+- `article` 必须指向站内现有文章；没有对应文章时不要填写。
+- `github-projects.json` 只是网络不可用时的缓存，不是主要配置来源。
+
+## 修改布局、组件和样式
+
+- 改全站颜色、字号、间距、响应式或主题：`src/styles/global.css`。
+- 改公共 HTML、SEO、Open Graph 或 JSON-LD：`src/layouts/BaseLayout.astro`。
+- 改首页：`src/pages/index.astro`。
+- 改导航：`src/components/Nav.astro`。
+- 改文章列表行：`src/components/PostSummary.astro`。
+- 改页脚：`src/components/Footer.astro`。
+- 改文章详情：`src/pages/posts/[...slug].astro`。
+- 改 Markdown 解析：`astro.config.mjs` 和 `src/lib/remark-*`、`src/lib/rehype-*`。
+
+修改组件时应保留键盘操作、焦点状态、`aria-label`、触摸操作和移动端布局。站内维护说明只放在 `/readme/` 和机器可读 JSON 中，不要用视觉隐藏文字塞入页面；完整规则保留在根目录 README 与 `AGENTS.md`。
+
+## AI 修改顺序
+
+后续 AI 接手时按以下顺序工作：
+
+1. 先读 `AGENTS.md`、本 README、`.openai/hosting.json` 和目标文件。
+2. 检查 Git 状态与远程更新，保留用户未提交的修改。
+3. 明确任务属于内容、链接、页面、样式还是发布。
+4. 对文章先读取 `ownership`，不要自动认定作者。
+5. 只改实现任务所需的文件，不批量重写无关内容。
+6. 执行 `npm run build`。
+7. 检查生成页面、内链、隐私和差异。
+8. 用户要求发布时，复用 `.openai/hosting.json` 中现有 Sites 项目，不创建新项目，也不依赖 GitHub。
+
+## 本地开发与构建
+
+环境要求：Node.js 20.19+ 或 22.12+。
 
 ```bash
-curl -s "https://api.github.com/users/Maziyang2/repos?per_page=100" -o src/data/github-projects.json
+npm ci
+npm run dev
 ```
 
-## 评论
+本地开发地址通常是 `http://localhost:4321`。
 
-评论前端没有使用 Twikoo 的默认 UI，而是通过 `src/lib/comments.js` 调用 Twikoo 后端接口并渲染自定义样式。
-
-文章正文支持选中文字后引用到底部评论区：
-
-1. 确认 `.env` 已配置 `PUBLIC_TWIKOO_ENV_ID`，否则评论区和引用按钮都会隐藏。
-2. 在文章正文或随笔正文中拖选至少 2 个字符。
-3. 选区上方会出现“引用评论”按钮。
-4. 点击按钮后页面会滚动到底部评论区，并把选中的文字以 Markdown blockquote 写入评论框。
-5. 发送成功后页面会回到刚才的阅读位置。
-
-## 常见问题
-
-**没装过 Node.js 怎么办？**
-到 https://nodejs.org/ 下载 LTS 版本安装，npm 会一并装好，然后回到「快速开始」从第 3 步继续。
-
-**Astro 需要单独安装吗？**
-不需要。Astro 是 `package.json` 里的依赖，`npm install` 自动安装，无需全局安装任何东西。
-
-**`npm install` 很慢 / 失败？**
-国内网络可切换到镜像源：
+最终验证：
 
 ```bash
-npm config set registry https://registry.npmmirror.com
+npm run build
 ```
 
-**提示 Node 版本太低？**
-Astro 5 要求 Node 18.20.8+ / 20.3.0+ / 22.0.0+，升级 Node.js 后重试。
+构建流程会先生成 Astro 静态站点，再由 `scripts/prepare-sites-build.mjs` 整理为：
 
-**端口被占用？**
-`npm run dev -- --port 4322` 指定其他端口。
+```text
+dist/
+├── client/               # HTML、CSS、JS、图片、RSS 和站点地图
+└── server/
+    ├── index.js          # Sites Worker 入口
+    └── wrangler.json     # 静态资源绑定信息
+```
+
+不要手工编辑 `dist/`。源文件发生变化后重新构建即可。
+
+## Sites 发布规则
+
+- `.openai/hosting.json` 已绑定现有站点；不得删除、替换或猜测 `project_id`。
+- 不得再次调用“创建站点”来发布这个仓库。
+- `.openai/hosting.json` 只允许保存 `project_id`、`d1` 和 `r2`，不得写入 Token 或环境变量。
+- 发布前必须构建成功，并确保提交、上传源码和部署包来自同一代码状态。
+- 访问权限、公开发布、自定义域名、环境变量和删除操作必须按用户明确指令执行。
+
+## 环境变量与隐私
+
+`.env` 已被 Git 忽略，只能保存在本机。`.env.example` 只能写占位值。
+
+当前可用变量：
+
+| 变量 | 用途 |
+| --- | --- |
+| `SITE_URL` | 非 Sites 平台构建时的正式域名 |
+| `PUBLIC_TWIKOO_ENV_ID` | Twikoo 评论后端；不配置时隐藏评论 |
+| `PUBLIC_NETEASE_PLAYLIST_ID` | 网易云歌单 ID |
+| `PUBLIC_MUSIC_API` | Meting 兼容音乐接口 |
+
+禁止提交：
+
+- GitHub、OpenAI、Cloudflare 或其他服务 Token。
+- API Key、密码、Cookie、Session、私有证书。
+- 私人邮箱、电话、家庭或办公地址、身份证件信息。
+- 私有仓库地址、内网地址、内部服务说明或未公开项目数据。
+
+如果新功能需要敏感变量，应在托管平台的环境变量或 Secret 管理中配置，只在 `.env.example` 留下不含真实值的变量名。
+
+## 发布前检查
+
+- `npm run build` 成功。
+- 新增文章有明确的 `ownership`。
+- 没有把模板文章错误标成 Maziyang2 原创。
+- `hidden` 文章的源码仍然存在，但没有进入任何公开页面或索引。
+- 没有提交 `.env`、Token 或个人隐私。
+- 文章、项目卡片和导航链接可以对应到现有目标。
+- 重命名或移动文章后已处理旧链接。
+- 根目录 README、`AGENTS.md` 和源码注释没有被原样复制进 `public/`；站内 `/readme/` 只包含可公开的结构说明。
+- `.openai/hosting.json` 仍指向原 Sites 项目。
+- Git 差异只包含本次需要的修改。
 
 ## 许可证
 
-本项目基于 [MIT License](LICENSE) 开源。仓库自带的示例文章与随笔仅用于演示，可直接删除替换。
+项目代码沿用仓库中的 MIT License。模板文章、继承文章和外部图片的版权与作者归属需要分别核验；站点所有者身份不等于文章作者身份。

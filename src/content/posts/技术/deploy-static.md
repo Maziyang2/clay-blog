@@ -2,6 +2,7 @@
 title: "静态站点的部署实践"
 description: "示例文章：介绍静态博客部署到主流托管平台的通用步骤与注意事项。"
 date: "2026-05-22"
+ownership: example
 cover: https://img.laogou717.com/file/900c227d7d0c16bc25586.png
 categories: 技术
 tags:

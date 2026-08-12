@@ -29,6 +29,9 @@ const posts = defineCollection({
       sticky: z.coerce.number().optional(),
       main_color: z.string().optional(),
       author: z.string().optional(),
+      ownership: z.enum(['personal', 'inherited', 'example', 'unverified']).optional(),
+      source: z.string().url().optional(),
+      hidden: z.boolean().optional(),
     })
     .passthrough(),
 });
@@ -41,6 +44,8 @@ const notes = defineCollection({
       title: z.string().optional(),
       mood: z.string().optional(),
       tags: stringList,
+      ownership: z.enum(['personal', 'inherited', 'example', 'unverified']).optional(),
+      source: z.string().url().optional(),
     })
     .passthrough(),
 });

@@ -12,8 +12,12 @@ export const site = {
 
 const getTime = (date?: Date) => date?.getTime() ?? 0;
 
+// `hidden` is a source-only maintenance instruction. Hidden Markdown remains
+// in the repository but is excluded from every generated public blog surface.
+export const isPostVisible = (post: BlogPost) => post.data.hidden !== true;
+
 export const sortPosts = (posts: BlogPost[]) =>
-  [...posts].sort((a, b) => {
+  posts.filter(isPostVisible).sort((a, b) => {
     const stickyDiff = (b.data.sticky ?? 0) - (a.data.sticky ?? 0);
 
     if (stickyDiff !== 0) {
@@ -30,7 +34,7 @@ export const sortPosts = (posts: BlogPost[]) =>
   });
 
 export const sortPostsByDate = (posts: BlogPost[]) =>
-  [...posts].sort((a, b) => {
+  posts.filter(isPostVisible).sort((a, b) => {
     const dateDiff = getTime(b.data.date) - getTime(a.data.date);
 
     if (dateDiff !== 0) {

@@ -2,6 +2,7 @@
 title: "聊聊大模型 API 的定价逻辑"
 description: "示例文章：从输入输出计费、上下文长度与缓存三个角度看懂 API 账单。"
 date: "2026-04-18"
+ownership: example
 categories: AI
 tags:
   - AI

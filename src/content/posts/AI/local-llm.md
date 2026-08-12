@@ -2,6 +2,7 @@
 title: "AI 工具本地部署入门"
 description: "示例文章：聊聊在本地运行开源大模型的基本思路，从选模型到跑起来。"
 date: "2026-03-08"
+ownership: example
 cover: https://image.laogou717.com/file/image/blog/1757588451171_image.png
 categories: AI
 sticky: 1

@@ -13,6 +13,7 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   jsonLd?: unknown;
+  robots?: string;
 }
 
 const {
@@ -22,6 +23,7 @@ const {
   image = '/share/og-maziyang2.png',
   type = 'website',
   jsonLd,
+  robots,
 } = Astro.props;
 
 const pageTitle = title === site.name ? title : `${title} - ${site.name}`;
@@ -84,10 +86,18 @@ const routeMotion = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="author" content={site.author} />
+    {robots && <meta name="robots" content={robots} />}
     <meta id="theme-color" name="theme-color" content="#f8f7f4" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/png" href="/avatars/maziyang2.png" />
     <link rel="apple-touch-icon" href="/avatars/maziyang2.png" />
+    <link rel="help" type="text/html" href="/readme/" title="站点结构与维护说明" />
+    <link
+      rel="alternate"
+      type="application/json"
+      href="/.well-known/site-readme.json"
+      title="Machine-readable site README"
+    />
     {import.meta.env.PUBLIC_TWIKOO_ENV_ID && (
       <link rel="preconnect" href={import.meta.env.PUBLIC_TWIKOO_ENV_ID} crossorigin />
     )}

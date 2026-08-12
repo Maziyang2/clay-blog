@@ -2,6 +2,7 @@
 title: "用 Markdown 管理博客内容"
 description: "示例文章：介绍本博客的内容目录结构、frontmatter 字段与写作流程。"
 date: "2025-12-05"
+ownership: example
 categories: 示例
 tags:
   - Markdown

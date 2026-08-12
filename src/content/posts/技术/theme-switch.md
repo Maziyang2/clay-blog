@@ -2,6 +2,7 @@
 title: "浅色与深色主题切换的实践"
 description: "示例文章：聊聊深色模式切换的实现思路，从 CSS 变量到过渡动画。"
 date: "2026-06-12"
+ownership: example
 categories: 技术
 tags:
   - CSS

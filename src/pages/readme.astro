@@ -1,0 +1,187 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteReadme } from '../data/site-readme';
+
+const articleTemplate = `---
+title: "文章标题"
+description: "一到两句话的摘要"
+date: "2026-08-13"
+author: "Maziyang2"
+ownership: personal
+hidden: false
+categories:
+  - 分类名称
+tags:
+  - 标签名称
+sticky: 0
+---`;
+
+const hideTemplate = `---
+hidden: true
+---`;
+
+const structureTree = `src/
+├── content/posts/              文章 Markdown
+├── content/notes/              随笔 Markdown
+├── data/site.config.json       站点身份、项目与可选外部链接
+├── data/site-readme.ts         本说明的机器可读数据源
+├── components/                 导航、页脚、文章摘要等组件
+├── layouts/BaseLayout.astro    全站 HTML、SEO 与公共布局
+├── pages/                      页面和公开路由
+├── styles/global.css           全站样式与响应式布局
+└── content.config.ts           文章、随笔字段规则
+
+public/                         公开图片和静态资源
+.openai/hosting.json            现有 Sites 项目绑定（不得公开凭据）`;
+---
+
+<BaseLayout
+  title="README · 站点结构说明"
+  description="Maziyang2 博客的公开结构说明，供后续 AI、GPT、Codex 与维护工具使用。"
+  pageClass="content-page readme-page"
+  robots="noindex,follow"
+>
+  <article class="readme">
+    <header class="page-header readme__header">
+      <p class="eyebrow">Site README · AI Friendly</p>
+      <h1>站点结构与维护说明</h1>
+      <p>
+        这是博客内部的公开结构说明，方便后续 AI、GPT、Codex 或其他维护工具安全地增加、删除、隐藏文章，以及修改链接和页面结构。
+      </p>
+      <div class="readme__meta" aria-label="说明元数据">
+        <span>更新：{siteReadme.updatedAt}</span>
+        <a href="/.well-known/site-readme.json">机器可读 JSON</a>
+      </div>
+    </header>
+
+    <aside class="readme__notice" aria-label="权限和隐私说明">
+      <strong>公开阅读不等于开放修改。</strong>
+      <p>
+        博客和本说明对外公开，但修改权限仍只属于 Maziyang2 及其明确授权的 Sites 协作者。本页不包含凭据，也不会授予任何写入权限。
+      </p>
+    </aside>
+
+    <nav class="readme__toc" aria-label="本页目录">
+      <a href="#principles">维护原则</a>
+      <a href="#content">内容归属</a>
+      <a href="#articles">文章操作</a>
+      <a href="#hide">隐藏文章</a>
+      <a href="#structure">项目结构</a>
+      <a href="#links">链接与页面</a>
+      <a href="#privacy">隐私与发布</a>
+    </nav>
+
+    <div class="post-content readme__content">
+      <section id="principles">
+        <h2>维护原则</h2>
+        <ul>
+          <li>先读本页和目标文件；本页就是站点内部的主要结构说明。</li>
+          <li>保留用户已有修改，只调整当前任务需要的内容。</li>
+          <li>先确认文章归属，再修改作者、来源或版权描述。</li>
+          <li>修改后运行 <code>npm run build</code>，检查页面、链接、隐私和生成结果。</li>
+          <li>发布时复用现有 Sites 项目，不创建另一个站点。</li>
+        </ul>
+      </section>
+
+      <section id="content">
+        <h2>内容归属</h2>
+        <p>
+          站点所有者是 Maziyang2，但现有文章并不都代表 Maziyang2 原创。文章和随笔使用 <code>ownership</code> 标明处理方式。
+        </p>
+        <table>
+          <thead><tr><th>值</th><th>含义</th><th>维护要求</th></tr></thead>
+          <tbody>
+            <tr><td><code>personal</code></td><td>用户确认的 Maziyang2 原创</td><td>可以使用 Maziyang2 作为作者</td></tr>
+            <tr><td><code>inherited</code></td><td>从原仓库继承</td><td>不可自动改成 Maziyang2 原创</td></tr>
+            <tr><td><code>example</code></td><td>网站功能演示内容</td><td>可按用户指定删除或替换</td></tr>
+            <tr><td><code>unverified</code></td><td>来源尚未确认</td><td>先询问，不猜测作者或来源</td></tr>
+          </tbody>
+        </table>
+        <p>
+          当前 <code>示例/</code>、<code>AI/</code>、<code>技术/</code> 目录内文章标为示例；原仓库继承的 Agent 文章和现有随笔标为继承内容。没有用户确认时，不得改成 <code>personal</code>。
+        </p>
+      </section>
+
+      <section id="articles">
+        <h2>增加、删除和移动文章</h2>
+        <h3>增加文章</h3>
+        <ol>
+          <li>在 <code>src/content/posts/&lt;分类&gt;/</code> 新建一个 <code>.md</code> 文件。</li>
+          <li>填写 frontmatter；原创文章明确写 <code>ownership: personal</code>。</li>
+          <li>正文使用 Markdown，站内图片放进 <code>public/</code> 并使用以 <code>/</code> 开始的路径。</li>
+          <li>构建通过后，未隐藏的文章会自动进入首页、归档、分类、标签、搜索、RSS 和站点地图。</li>
+        </ol>
+        <pre><code>{articleTemplate}</code></pre>
+
+        <h3>删除文章</h3>
+        <ol>
+          <li>删除对应 Markdown 文件。</li>
+          <li>全局搜索旧文章路径，清理文章内链和 <code>site.config.json</code> 中的引用。</li>
+          <li>如果文章已公开使用，优先在 <code>astro.config.mjs</code> 为旧地址增加重定向。</li>
+          <li>不要一次性删除整批示例或继承内容，除非用户明确指定范围。</li>
+        </ol>
+
+        <h3>移动或重命名</h3>
+        <p>
+          文章目录和文件名会影响公开 URL。移动或改名后，需要更新所有站内链接，并为已对外使用的旧 URL 添加重定向。
+        </p>
+      </section>
+
+      <section id="hide">
+        <h2>保留源码，但不在网站显示</h2>
+        <p>
+          “隐藏文章”是用户在修改网站时发给 AI 或维护工具的指令，不是网站上的访客开关。执行该指令时，在目标文章 frontmatter 中增加：
+        </p>
+        <pre><code>{hideTemplate}</code></pre>
+        <p>
+          Markdown 文件、正文和元数据仍保留在 Sites 项目源码中，但重新构建后不会生成该文章的公开页面，也不会出现在首页、归档、分类、标签、站内搜索、RSS 或站点地图中。
+        </p>
+        <p>
+          重新显示时，将值改为 <code>false</code> 或删除该字段，再构建发布。这个标记不是访问权限或加密功能，因此敏感内容不应通过“隐藏文章”来保存。
+        </p>
+      </section>
+
+      <section id="structure">
+        <h2>项目结构</h2>
+        <pre><code>{structureTree}</code></pre>
+        <p>
+          <code>dist/</code>、<code>.astro/</code> 和 <code>node_modules/</code> 都是生成目录，不要手工修改或提交。
+        </p>
+      </section>
+
+      <section id="links">
+        <h2>链接、页面与结构修改</h2>
+        <table>
+          <thead><tr><th>需求</th><th>主要文件</th></tr></thead>
+          <tbody>
+            <tr><td>站点名称、作者、项目卡片和可选外部链接</td><td><code>src/data/site.config.json</code></td></tr>
+            <tr><td>首页介绍、精选和最新文章</td><td><code>src/pages/index.astro</code></td></tr>
+            <tr><td>关于页介绍和开源项目</td><td><code>src/pages/about.astro</code></td></tr>
+            <tr><td>顶部导航</td><td><code>src/components/Nav.astro</code></td></tr>
+            <tr><td>页脚内容和链接</td><td><code>src/components/Footer.astro</code></td></tr>
+            <tr><td>文章详情、作者数据和相关文章</td><td><code>src/pages/posts/[...slug].astro</code></td></tr>
+            <tr><td>全站 SEO、分享图和公共布局</td><td><code>src/layouts/BaseLayout.astro</code></td></tr>
+            <tr><td>颜色、字号、间距和响应式布局</td><td><code>src/styles/global.css</code></td></tr>
+            <tr><td>旧链接重定向</td><td><code>astro.config.mjs</code></td></tr>
+          </tbody>
+        </table>
+        <p>
+          修改任何链接时，检查链接文字、目标地址、站内路径是否存在、尾部斜杠，以及外链是否包含 <code>rel="noopener noreferrer"</code>。
+        </p>
+      </section>
+
+      <section id="privacy">
+        <h2>隐私、权限与发布</h2>
+        <ul>
+          {siteReadme.privacyRules.map((rule) => <li>{rule}</li>)}
+        </ul>
+        <p>
+          网站是公开博客。密码、Token、API Key、Cookie、Session、私人邮箱、电话、精确住址、证件信息、内网地址和未公开项目数据都不能写入文章、源码、本说明或构建产物。
+        </p>
+        <p>
+          <code>.openai/hosting.json</code> 只用于绑定现有 Sites 项目；不能写入访问凭据，也不能在发布时创建新的同名站点。站点源码、修改和发布流程都以 Sites 项目为准，不依赖 GitHub。
+        </p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

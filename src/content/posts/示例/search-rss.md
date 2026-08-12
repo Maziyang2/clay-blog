@@ -2,6 +2,7 @@
 title: "搜索与 RSS 订阅"
 description: "示例文章：演示博客的站内搜索、RSS 订阅与站点地图功能。"
 date: "2026-02-10"
+ownership: example
 cover: https://image.laogou717.com/file/image/blog/note/KWaPoAlw.jpg
 categories: 示例
 tags:

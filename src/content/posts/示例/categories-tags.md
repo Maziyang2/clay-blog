@@ -2,6 +2,7 @@
 title: "分类、标签与归档"
 description: "示例文章：介绍博客的分类页、标签页与归档页是如何自动生成的。"
 date: "2026-01-15"
+ownership: example
 cover: https://image.laogou717.com/file/image/blog/2024/d4uvaLUq.jpg
 categories: 示例
 tags:
