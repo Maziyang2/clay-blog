@@ -14,7 +14,7 @@ const firstYear = posts.reduce((min, post) => {
 // ---- 开源项目：构建时从 GitHub API 自动同步 ----
 // 优先请求实时数据（5 秒超时）；API 不可达时回退到本地缓存
 // src/data/github-projects.json（用以下命令刷新缓存：
-// curl -s "https://api.github.com/users/laogou717/repos?per_page=100" -o src/data/github-projects.json）
+// curl -s "https://api.github.com/users/Maziyang2/repos?per_page=100" -o src/data/github-projects.json）
 interface GhRepo {
   name: string;
   description: string | null;
@@ -54,7 +54,7 @@ const fetchGithubRepos = async (): Promise<GhRepo[]> => {
       `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=pushed&type=source`,
       {
         headers: {
-          'User-Agent': 'laogou717-blog/astro',
+          'User-Agent': 'maziyang2-blog/astro',
           Accept: 'application/vnd.github+json',
         },
         signal: controller.signal,
@@ -105,60 +105,42 @@ const projectGroups = [
 
 <BaseLayout
   title="关于"
-  description="关于段枫，以及这个完全由 AI 开发的博客会持续记录的内容。"
+  description="关于 Maziyang2，以及这个博客持续记录的产品、AI 与技术实践。"
   pageClass="content-page"
 >
   <article class="about">
     <header class="about__intro">
       <img
-        src="/avatars/avatar.png"
-        alt="段枫头像"
+        src="/avatars/maziyang2.png"
+        alt="Maziyang2 头像"
         class="about__avatar"
         width="72"
         height="72"
       />
       <p class="eyebrow">About</p>
       <h1 class="about__lead">
-        比起追新，我更在意一个工具<em>到底好不好用</em>。
+        我关心产品如何落地，也记录技术<em>怎样改变日常</em>。
       </h1>
       <p class="about__sub">
-        这里大多是亲手用过、踩过坑之后的实践笔记 —— 偏实用，也保留个人判断。
+        这里大多是亲手用过、踩过坑之后的实践笔记 —— 重视可复现的方法，也保留个人判断。
       </p>
       <p class="about__sub">
-        而这个网站本身，从设计到每一行代码，<em>全部由 AI 开发完成</em> —— 也算是对「到底好不好用」的一份现场答卷。
+        本站基于开源 Clay Blog 构建，使用 Astro 与 Markdown，把写作、项目和长期积累放在同一个入口。
       </p>
 
       <div class="about__facts" aria-label="站点速览">
         <span class="about__fact">{postCount} 篇文章</span>
         <span class="about__fact">写于 {firstYear} 至今</span>
-        <span class="about__fact">全站由 AI 开发</span>
+        <span class="about__fact">Astro · Markdown</span>
         <span class="about__social" aria-label="找到我">
           <a
             class="icon-button"
-            href="https://space.bilibili.com/46377861"
+            href="https://github.com/Maziyang2"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Bilibili"
+            aria-label="GitHub"
           >
-            <Icon name="bilibili" />
-          </a>
-          <a
-            class="icon-button"
-            href="https://www.youtube.com/channel/UCUuwwXFGK8Z3OBrq6PzkmUg"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="YouTube"
-          >
-            <Icon name="youtube" />
-          </a>
-          <a
-            class="icon-button"
-            href="https://x.com/shenfanlaogou"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="X"
-          >
-            <Icon name="x-platform" />
+            <Icon name="github" />
           </a>
           <a class="icon-button" href="/rss.xml" aria-label="RSS 订阅">
             <Icon name="rss" />

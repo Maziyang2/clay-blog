@@ -5,22 +5,18 @@ import { site } from '../lib/posts';
 const year = new Date().getFullYear();
 
 const channels = [
-  { name: 'Bilibili', icon: 'bilibili', href: 'https://space.bilibili.com/46377861' },
-  { name: 'YouTube', icon: 'youtube', href: 'https://www.youtube.com/channel/UCUuwwXFGK8Z3OBrq6PzkmUg' },
+  { name: 'GitHub', icon: 'github', href: 'https://github.com/Maziyang2' },
   { name: 'RSS', icon: 'rss', href: '/rss.xml' },
 ];
 
-const groups = [
-  { name: 'QQ 交流群', icon: 'qq', href: '' },
-  { name: '微信交流群', icon: 'wechat', href: '' },
-];
+const groups: Array<{ name: string; icon: string; href: string }> = [];
 ---
 
 <footer class="site-footer">
   <div class="site-footer__inner">
     <div class="site-footer__id">
       <img
-        src="/avatars/avatar.png"
+        src="/avatars/maziyang2.png"
         alt={site.author}
         class="site-footer__avatar"
         width="40"
@@ -28,7 +24,7 @@ const groups = [
       />
       <div class="site-footer__id-text">
         <strong>{site.author}</strong>
-        <span>AI · Code · Web</span>
+        <span>Product · AI · Code</span>
       </div>
     </div>
 
@@ -43,7 +39,7 @@ const groups = [
           {name}
         </a>
       ))}
-      <span class="site-footer__sep" aria-hidden="true"></span>
+      {groups.length > 0 && <span class="site-footer__sep" aria-hidden="true"></span>}
       {groups.map(({ name, icon, href }) => (
         href ? (
           <a

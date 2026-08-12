@@ -1,30 +1,29 @@
 {
-  "siteName": "段枫的博客",
-  "siteDescription": "记录 AI、代码、网站搭建和技术观察。",
-  "siteAuthor": "段枫",
-  "githubUser": "laogou717",
-  "githubRepo": "https://github.com/laogou717/clay-blog",
+  "siteName": "Maziyang2 的博客",
+  "siteDescription": "记录产品、AI、代码与数字生活的实践和思考。",
+  "siteAuthor": "Maziyang2",
+  "githubUser": "Maziyang2",
+  "githubRepo": "https://github.com/Maziyang2/clay-blog",
   "projectOverrides": {
-    "md-wechat": {
-      "icon": "wechat"
+    "HiddenWindow": {
+      "icon": "layers"
     },
-    "Steam-game-cover-gets": {
-      "icon": "download"
+    "clay-blog": {
+      "icon": "bookmark"
     }
   },
   "projectGroups": [
     {
-      "title": "资源下载",
-      "description": "文章里提到的网盘、脚本和可复用资料，可在本文件中增删条目或整组。",
+      "title": "博客源码",
+      "description": "本站使用的开源模板、配置与 Markdown 内容。",
       "items": [
         {
-          "title": "静态站点部署实践",
-          "owner": "Blog",
-          "description": "示例资源条目：静态博客部署到主流托管平台的通用步骤。",
-          "icon": "globe",
-          "href": "/posts/技术/deploy-static/",
-          "article": "/posts/技术/deploy-static/",
-          "tags": ["部署", "示例"]
+          "title": "clay-blog",
+          "owner": "Maziyang2",
+          "description": "这个博客的 Astro 源码、站点配置与内容仓库。",
+          "icon": "github",
+          "href": "https://github.com/Maziyang2/clay-blog",
+          "tags": ["Astro", "Blog", "Open Source"]
         }
       ]
     }

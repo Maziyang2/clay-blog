@@ -1,6 +1,6 @@
-# clay-blog
+# Maziyang2 的博客
 
-基于 Astro 的个人博客模板，内容使用 Markdown 管理，包含文章、随笔、归档、分类、标签、搜索、RSS、站点地图和 Twikoo 后端评论。仓库自带示例文章，克隆后可直接构建预览。
+基于 Astro 与开源 Clay Blog 构建的个人博客，内容使用 Markdown 管理，包含文章、随笔、归档、分类、标签、搜索、RSS、站点地图和 Twikoo 后端评论。
 
 ## 项目结构
 
@@ -36,7 +36,7 @@ blog/
 # 1. 安装 Node.js（未安装时）：到 https://nodejs.org/ 下载 LTS 版本安装
 
 # 2. 下载项目
-git clone https://github.com/laogou717/clay-blog.git
+git clone https://github.com/Maziyang2/clay-blog.git
 cd clay-blog
 
 # 3. 安装依赖（自动安装 Astro）
@@ -121,7 +121,7 @@ Meting 是非官方接入方式，受网易云版权、VIP 与地区限制影响
 ```jsonc
 {
   // GitHub 用户名：构建时自动拉取该账号的公开仓库作为「开源项目」
-  "githubUser": "laogou717",
+  "githubUser": "Maziyang2",
   // 按仓库名覆盖卡片细节：icon 为卡片图标（见 src/components/Icon.astro 的图标名），
   // article 为指向博客内相关文章的「笔记」链接（不填则不显示该按钮）
   "projectOverrides": {
@@ -149,10 +149,10 @@ Meting 是非官方接入方式，受网易云版权、VIP 与地区限制影响
 }
 ```
 
-「开源项目」组在构建时从 GitHub API 拉取（自动排除 fork，按 Star 数排序），新增仓库重新构建即可自动出现；API 不可达时回退到 [src/data/github-projects.json](src/data/github-projects.json) 缓存，可用以下命令手动刷新（将 `laogou717` 替换为你的 GitHub 用户名）：
+「开源项目」组在构建时从 GitHub API 拉取（自动排除 fork，按 Star 数排序），新增仓库重新构建即可自动出现；API 不可达时回退到 [src/data/github-projects.json](src/data/github-projects.json) 缓存，可用以下命令手动刷新：
 
 ```bash
-curl -s "https://api.github.com/users/laogou717/repos?per_page=100" -o src/data/github-projects.json
+curl -s "https://api.github.com/users/Maziyang2/repos?per_page=100" -o src/data/github-projects.json
 ```
 
 ## 评论
