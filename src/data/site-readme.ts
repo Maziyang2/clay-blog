@@ -2,10 +2,11 @@ import siteConfig from './site.config.json';
 
 export const siteReadme = {
   schemaVersion: 1,
-  updatedAt: '2026-08-13',
+  updatedAt: '2026-09-24',
   purpose: '供 Maziyang2 授权的 AI、GPT、Codex 与维护工具理解并修改博客结构。',
   site: {
     name: siteConfig.siteName,
+    url: 'https://blog.maziyang.top',
     owner: 'Maziyang2',
     visibility: 'public',
     editAuthority: '仅 Maziyang2 及其明确授权的 Sites 协作者',

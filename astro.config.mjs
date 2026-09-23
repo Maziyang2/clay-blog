@@ -4,7 +4,7 @@ import rehypeLegacyShortcodes from './src/lib/rehype-legacy-shortcodes.mjs';
 import remarkLegacyShortcodes from './src/lib/remark-legacy-shortcodes.mjs';
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? 'https://clay-blog.invalid',
+  site: process.env.SITE_URL ?? 'https://blog.maziyang.top',
   redirects: {
     '/projects': '/about',
   },

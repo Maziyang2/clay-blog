@@ -13,6 +13,7 @@
 - 主要页面：首页、随笔、归档、关于、搜索、分类、标签和文章详情。
 - 输出：`npm run build` 后生成适配 Sites 的 `dist/client` 与 `dist/server`。
 - 托管：OpenAI Sites，项目绑定信息位于 `.openai/hosting.json`。
+- 正式域名：`https://blog.maziyang.top`。
 - 访问：博客对外公开；管理和发布仍受 Sites 权限控制。
 - 数据库与上传：当前未使用 D1、R2 或用户登录。
 - 维护基准：OpenAI Sites 项目源码；GitHub 链接只作为可选的页面内容展示。
@@ -313,7 +314,7 @@ dist/
 
 | 变量 | 用途 |
 | --- | --- |
-| `SITE_URL` | 非 Sites 平台构建时的正式域名 |
+| `SITE_URL` | 可选的构建时站点地址；不设置时使用 `https://blog.maziyang.top` |
 | `PUBLIC_TWIKOO_ENV_ID` | Twikoo 评论后端；不配置时隐藏评论 |
 | `PUBLIC_NETEASE_PLAYLIST_ID` | 网易云歌单 ID |
 | `PUBLIC_MUSIC_API` | Meting 兼容音乐接口 |

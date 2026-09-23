@@ -6,7 +6,7 @@ export type BlogPost = CollectionEntry<'posts'>;
 export const site = {
   name: siteConfig.siteName,
   description: siteConfig.siteDescription,
-  url: import.meta.env.SITE_URL ?? 'https://clay-blog.invalid',
+  url: import.meta.env.SITE_URL ?? 'https://blog.maziyang.top',
   author: siteConfig.siteAuthor,
 };
 
